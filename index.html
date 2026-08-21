@@ -38,45 +38,29 @@
     .slide {
         min-width: 100%;
         height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        position: relative;
         flex-shrink: 0;
-        font-size: 50px;
-        font-weight: bold;
-        color: white;
         user-select: none;
     }
 
-    /* Placeholder backgrounds */
-    .slide:nth-child(1) {
-        background: #e74c3c;
+    .slide img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        pointer-events: none;
     }
 
-    .slide:nth-child(2) {
-        background: #3498db;
-    }
-
-    .slide:nth-child(3) {
-        background: #2ecc71;
-    }
-
-    .slide:nth-child(4) {
-        background: #e74c3c;
-    }
-
-    .slide:nth-child(5) {
-        background: #3498db;
-    }
-
-    .placeholder {
-        width: 80%;
-        height: 70%;
-        border: 5px dashed rgba(255,255,255,0.7);
+    .fallback-label {
+        position: absolute;
+        inset: 0;
         display: flex;
         align-items: center;
         justify-content: center;
-        text-align: center;
+        font-size: 2rem;
+        font-weight: bold;
+        color: rgba(255, 255, 255, 0.9);
+        background: linear-gradient(135deg, #2f2f2f, #1a1a1a);
     }
 
     .hint {
@@ -96,32 +80,7 @@
 
 <div class="carousel" id="carousel">
 
-    <div class="track" id="track">
-
-        <!-- Clone of Image 3 -->
-        <div class="slide">
-            <div class="placeholder">IMAGE 3</div>
-        </div>
-
-        <!-- Real slides -->
-        <div class="slide">
-            <div class="placeholder">IMAGE 1</div>
-        </div>
-
-        <div class="slide">
-            <div class="placeholder">IMAGE 2</div>
-        </div>
-
-        <div class="slide">
-            <div class="placeholder">IMAGE 3</div>
-        </div>
-
-        <!-- Clone of Image 1 -->
-        <div class="slide">
-            <div class="placeholder">IMAGE 1</div>
-        </div>
-
-    </div>
+    <div class="track" id="track"></div>
 
     <div class="hint">Swipe left or right</div>
 
@@ -131,12 +90,58 @@
 
 const carousel = document.getElementById("carousel");
 const track = document.getElementById("track");
-const totalSlides = 3;
+const imageFiles = [
+    "images/image-1.jpg",
+    "images/image-2.jpg",
+    "images/image-3.jpg"
+];
+
+const totalSlides = imageFiles.length;
 const threshold = 50;
 let currentIndex = 1;
 let startX = 0;
 let currentX = 0;
 let isDragging = false;
+
+function createSlide(src, label) {
+    const slide = document.createElement("div");
+    slide.className = "slide";
+
+    const img = document.createElement("img");
+    img.src = src;
+    img.alt = label;
+
+    img.addEventListener("error", () => {
+        if (slide.querySelector(".fallback-label")) return;
+        const fallback = document.createElement("div");
+        fallback.className = "fallback-label";
+        fallback.textContent = `${label} (missing file)`;
+        slide.appendChild(fallback);
+    });
+
+    img.addEventListener("load", () => {
+        const fallback = slide.querySelector(".fallback-label");
+        if (fallback) fallback.remove();
+    });
+
+    slide.appendChild(img);
+    return slide;
+}
+
+function buildSlides() {
+    track.innerHTML = "";
+
+    const orderedSlides = [
+        imageFiles[imageFiles.length - 1],
+        ...imageFiles,
+        imageFiles[0]
+    ];
+
+    orderedSlides.forEach((src, index) => {
+        const label = `Image ${((index - 1 + totalSlides) % totalSlides) + 1}`;
+        track.appendChild(createSlide(src, label));
+    });
+}
 
 function setPosition(animate = true, dragDistance = 0) {
     track.style.transition = animate
@@ -164,6 +169,7 @@ function finishDrag() {
     setPosition(true);
 }
 
+buildSlides();
 setPosition(false);
 
 carousel.addEventListener("pointerdown", (event) => {
