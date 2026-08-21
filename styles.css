@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
 * {
   box-sizing: border-box;
 }
@@ -8,4 +10,64 @@ body {
   padding: 0;
   width: 100%;
   min-height: 100%;
+  background: #111315;
+  color: #f4f0e7;
+  font-family: 'Space Grotesk', sans-serif;
+  overflow-x: hidden;
+}
+
+body {
+  background: radial-gradient(circle at 72% 45%, #292b29 0, #111315 42%, #0b0d0e 100%);
+}
+
+.game-shell { min-height: 100vh; display: flex; flex-direction: column; }
+.topbar, .footer { display: flex; align-items: center; padding: 28px 5vw; font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: .12em; }
+.topbar { justify-content: space-between; border-bottom: 1px solid #ffffff1a; }
+.brand { color: #f4f0e7; text-decoration: none; font-size: 20px; font-weight: 500; letter-spacing: -.12em; }
+.mode-label, .player-label { margin: 0; color: #9a9b95; }
+.mode-label span { display: inline-block; width: 5px; height: 5px; margin: 0 10px 1px; border-radius: 50%; background: #df5c3c; }
+.player-label strong { margin-left: 10px; color: #df5c3c; font-weight: 400; }
+.selection-screen { flex: 1; display: grid; grid-template-columns: minmax(250px, .65fr) 1.35fr; align-items: center; gap: 4vw; width: min(1400px, 90vw); margin: 0 auto; padding: 7vh 0 5vh; }
+.intro { position: relative; z-index: 2; }
+.eyebrow, .instructions, .footer { font-family: 'DM Mono', monospace; }
+.eyebrow { color: #df5c3c; font-size: 11px; letter-spacing: .15em; }
+h1 { margin: 22px 0 34px; font-size: clamp(48px, 6.2vw, 94px); line-height: .9; letter-spacing: -.07em; font-weight: 600; }
+h1 em { color: #df5c3c; font-style: normal; }
+.instructions { color: #94958f; font-size: 11px; letter-spacing: .08em; }
+.instructions::before { content: '←'; margin-right: 9px; color: #df5c3c; font-size: 16px; vertical-align: -1px; }
+.carousel-wrap { min-width: 0; }
+.carousel { cursor: grab; user-select: none; touch-action: pan-y; }
+.carousel.is-dragging { cursor: grabbing; }
+.carousel-track { display: flex; gap: 20px; width: max-content; will-change: transform; }
+.character { width: clamp(190px, 20vw, 285px); flex: 0 0 auto; color: #111315; transition: transform .35s ease; }
+.character:hover { transform: translateY(-8px); }
+.portrait { position: relative; height: clamp(285px, 34vw, 470px); overflow: hidden; background: #474843; }
+.portrait::after { position: absolute; inset: 0; content: ''; background: linear-gradient(180deg, transparent 48%, #0005 100%); pointer-events: none; }
+.portrait img { width: 100%; height: 100%; display: block; object-fit: cover; filter: saturate(.8) contrast(1.05); pointer-events: none; }
+.character--ember .portrait { background: #d65f40; }
+.character--ember .portrait img { object-position: 50% 20%; mix-blend-mode: multiply; }
+.character--nova .portrait { background: #5d7772; }
+.character--nova .portrait img { object-position: 50% 15%; mix-blend-mode: multiply; }
+.character--juno .portrait { background: #b08c65; }
+.character--juno .portrait img { object-position: 50% 18%; mix-blend-mode: multiply; }
+.character--atlas .portrait { background: #9c5948; }
+.character--atlas .portrait img { object-position: 50% 17%; mix-blend-mode: multiply; }
+.card-meta { display: grid; grid-template-columns: 28px 1fr; gap: 0 10px; padding: 17px 16px 19px; background: #e6e0d3; }
+.card-meta span { grid-row: span 2; padding-top: 4px; color: #8c8c84; font: 11px 'DM Mono', monospace; }
+.card-meta h2 { margin: 0; font-size: 25px; letter-spacing: -.06em; font-weight: 600; }
+.card-meta p { margin: 4px 0 0; color: #77786f; font: 10px 'DM Mono', monospace; text-transform: uppercase; letter-spacing: .07em; }
+.carousel-hint { display: flex; gap: 7px; margin-top: 25px; }
+.carousel-hint span { width: 22px; height: 2px; background: #555852; }
+.carousel-hint span:first-child { background: #df5c3c; }
+.footer { gap: 18px; color: #777973; }
+.footer-line { height: 1px; flex: 1; background: #ffffff1a; }
+@media (max-width: 720px) {
+  .topbar { padding: 21px 6vw; }
+  .mode-label { display: none; }
+  .selection-screen { display: block; width: 88vw; padding: 9vh 0 7vh; }
+  h1 { margin: 18px 0 28px; font-size: clamp(54px, 17vw, 82px); }
+  .carousel { margin-right: -6vw; }
+  .character { width: 62vw; }
+  .portrait { height: 82vw; max-height: 430px; }
+  .footer { padding: 20px 6vw; font-size: 8px; }
 }
