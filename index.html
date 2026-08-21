@@ -18,7 +18,7 @@
         height: 100vh;
         overflow: hidden;
         font-family: Arial, sans-serif;
-        background: #111;
+        background: #FF011426;
     }
 
     .carousel {
@@ -95,6 +95,10 @@
 </div>
 
 <script>
+
+function finishLoading() {
+    window.AppInventor.setWebViewString("PAGE_READY");
+}
 
 const carousel = document.getElementById("carousel");
 const track = document.getElementById("track");
