@@ -36,17 +36,24 @@
     }
 
     .slide {
+        width: 100%;
         min-width: 100%;
+        flex: 0 0 100%;
         height: 100%;
         position: relative;
-        flex-shrink: 0;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         user-select: none;
+        background: #000;
     }
 
     .slide img {
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        object-fit: contain;
+        object-position: center center;
         display: block;
         pointer-events: none;
     }
