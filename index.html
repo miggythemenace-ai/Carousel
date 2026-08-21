@@ -131,179 +131,67 @@
 
 const carousel = document.getElementById("carousel");
 const track = document.getElementById("track");
-
+const totalSlides = 3;
+const threshold = 50;
 let currentIndex = 1;
-
 let startX = 0;
 let currentX = 0;
 let isDragging = false;
 
-const totalSlides = 3;
-const threshold = 50;
-
-
-// Position carousel at Image 1
-function setPosition(animate = true) {
-
+function setPosition(animate = true, dragDistance = 0) {
     track.style.transition = animate
         ? "transform 0.45s cubic-bezier(0.22, 1, 0.36, 1)"
         : "none";
 
-    track.style.transform =
-        `translateX(-${currentIndex * 100}%)`;
+    const offset = (currentIndex * -100) + dragDistance;
+    track.style.transform = `translateX(${offset}%)`;
+}
+
+function finishDrag() {
+    if (!isDragging) return;
+
+    isDragging = false;
+    carousel.classList.remove("dragging");
+
+    const difference = currentX - startX;
+    if (difference < -threshold) currentIndex++;
+    if (difference > threshold) currentIndex--;
+
+    setPosition(true);
 }
 
 setPosition(false);
 
-
-// Move to next/previous slide
-function move(direction) {
-
-    if (isDragging) return;
-
-    currentIndex += direction;
-
-    setPosition(true);
-}
-
-
-// When animation finishes, silently move from clones
-track.addEventListener("transitionend", () => {
-
-    // If we're on the clone of Image 3
-    if (currentIndex === 0) {
-
-        currentIndex = totalSlides;
-
-        setPosition(false);
-    }
-
-    // If we're on the clone of Image 1
-    if (currentIndex === totalSlides + 1) {
-
-        currentIndex = 1;
-
-        setPosition(false);
-    }
-});
-
-
-// TOUCH START
-carousel.addEventListener("touchstart", (event) => {
-
-    startX = event.touches[0].clientX;
-    currentX = startX;
-
+carousel.addEventListener("pointerdown", (event) => {
     isDragging = true;
-
-    track.style.transition = "none";
-});
-
-
-// TOUCH MOVE
-carousel.addEventListener("touchmove", (event) => {
-
-    if (!isDragging) return;
-
-    currentX = event.touches[0].clientX;
-
-    const difference = currentX - startX;
-
-    const percentage =
-        (difference / carousel.offsetWidth) * 100;
-
-    track.style.transform =
-        `translateX(calc(-${currentIndex * 100}% + ${percentage}%))`;
-});
-
-
-// TOUCH END
-carousel.addEventListener("touchend", () => {
-
-    if (!isDragging) return;
-
-    isDragging = false;
-
-    const difference = currentX - startX;
-
-    // Swipe left
-    if (difference < -threshold) {
-
-        currentIndex++;
-    }
-
-    // Swipe right
-    else if (difference > threshold) {
-
-        currentIndex--;
-    }
-
-    setPosition(true);
-});
-
-
-// MOUSE SUPPORT FOR DESKTOP
-carousel.addEventListener("mousedown", (event) => {
-
     startX = event.clientX;
     currentX = startX;
-
-    isDragging = true;
-
-    track.style.transition = "none";
+    carousel.classList.add("dragging");
+    carousel.setPointerCapture(event.pointerId);
+    setPosition(false);
 });
 
-
-carousel.addEventListener("mousemove", (event) => {
-
+carousel.addEventListener("pointermove", (event) => {
     if (!isDragging) return;
 
     currentX = event.clientX;
-
-    const difference = currentX - startX;
-
-    const percentage =
-        (difference / carousel.offsetWidth) * 100;
-
-    track.style.transform =
-        `translateX(calc(-${currentIndex * 100}% + ${percentage}%))`;
+    const dragDistance = ((currentX - startX) / carousel.offsetWidth) * 100;
+    setPosition(false, dragDistance);
 });
 
+carousel.addEventListener("pointerup", finishDrag);
+carousel.addEventListener("pointercancel", finishDrag);
+carousel.addEventListener("dragstart", (event) => event.preventDefault());
 
-carousel.addEventListener("mouseup", () => {
+track.addEventListener("transitionend", (event) => {
+    if (event.propertyName !== "transform") return;
 
-    if (!isDragging) return;
-
-    isDragging = false;
-
-    const difference = currentX - startX;
-
-    if (difference < -threshold) {
-        currentIndex++;
-    }
-
-    else if (difference > threshold) {
-        currentIndex--;
-    }
-
-    setPosition(true);
-});
-
-
-carousel.addEventListener("mouseleave", () => {
-
-    if (!isDragging) return;
-
-    isDragging = false;
-
-    setPosition(true);
-});
-
-
-// Keep the carousel correctly sized if the screen rotates
-window.addEventListener("resize", () => {
+    if (currentIndex === 0) currentIndex = totalSlides;
+    if (currentIndex === totalSlides + 1) currentIndex = 1;
     setPosition(false);
 });
+
+window.addEventListener("resize", () => setPosition(false));
 
 </script>
 
