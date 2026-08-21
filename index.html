@@ -147,6 +147,10 @@ function setPosition(animate = true, dragDistance = 0) {
     track.style.transform = `translateX(${offset}%)`;
 }
 
+function normalizeIndex() {
+    currentIndex = ((currentIndex - 1 + totalSlides) % totalSlides) + 1;
+}
+
 function finishDrag() {
     if (!isDragging) return;
 
@@ -184,10 +188,12 @@ carousel.addEventListener("pointercancel", finishDrag);
 carousel.addEventListener("dragstart", (event) => event.preventDefault());
 
 track.addEventListener("transitionend", (event) => {
-    if (event.propertyName !== "transform") return;
+    if (event.propertyName !== "transform" || event.target !== track) return;
 
-    if (currentIndex === 0) currentIndex = totalSlides;
-    if (currentIndex === totalSlides + 1) currentIndex = 1;
+    if (currentIndex < 1 || currentIndex > totalSlides) {
+        normalizeIndex();
+    }
+
     setPosition(false);
 });
 
