@@ -1,53 +1,311 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Choose Your Character</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <main class="game-shell">
-      <header class="topbar">
-        <a class="brand" href="/" aria-label="Home">M//</a>
-        <p class="mode-label">VERSUS MODE <span></span> CHARACTER SELECT</p>
-        <p class="player-label">P1 <strong>READY</strong></p>
-      </header>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-      <section class="selection-screen" aria-labelledby="screen-title">
-        <div class="intro">
-          <p class="eyebrow">ROSTER / 04</p>
-          <h1 id="screen-title">Choose your<br /><em>fighter.</em></h1>
-          <p class="instructions">Drag to browse the roster</p>
+<title>Seamless Infinite Carousel</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        width: 100%;
+        height: 100vh;
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+        background: #111;
+    }
+
+    .carousel {
+        width: 100%;
+        height: 100vh;
+        overflow: hidden;
+        position: relative;
+        touch-action: pan-y;
+    }
+
+    .track {
+        display: flex;
+        height: 100%;
+        will-change: transform;
+    }
+
+    .slide {
+        min-width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 50px;
+        font-weight: bold;
+        color: white;
+        user-select: none;
+    }
+
+    /* Placeholder backgrounds */
+    .slide:nth-child(1) {
+        background: #e74c3c;
+    }
+
+    .slide:nth-child(2) {
+        background: #3498db;
+    }
+
+    .slide:nth-child(3) {
+        background: #2ecc71;
+    }
+
+    .slide:nth-child(4) {
+        background: #e74c3c;
+    }
+
+    .slide:nth-child(5) {
+        background: #3498db;
+    }
+
+    .placeholder {
+        width: 80%;
+        height: 70%;
+        border: 5px dashed rgba(255,255,255,0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .hint {
+        position: absolute;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: white;
+        opacity: 0.7;
+        font-size: 14px;
+        pointer-events: none;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="carousel" id="carousel">
+
+    <div class="track" id="track">
+
+        <!-- Clone of Image 3 -->
+        <div class="slide">
+            <div class="placeholder">IMAGE 3</div>
         </div>
 
-        <div class="carousel-wrap">
-          <div class="carousel" data-carousel aria-label="Character roster">
-            <div class="carousel-track">
-              <article class="character character--ember" data-name="Ember" data-role="The Spark">
-                <div class="portrait"><img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=900&q=85" alt="Ember character portrait" draggable="false" /></div>
-                <div class="card-meta"><span>01</span><h2>Ember</h2><p>The Spark</p></div>
-              </article>
-              <article class="character character--nova" data-name="Nova" data-role="Gravity Runner">
-                <div class="portrait"><img src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=900&q=85" alt="Nova character portrait" draggable="false" /></div>
-                <div class="card-meta"><span>02</span><h2>Nova</h2><p>Gravity Runner</p></div>
-              </article>
-              <article class="character character--juno" data-name="Juno" data-role="Void Walker">
-                <div class="portrait"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=85" alt="Juno character portrait" draggable="false" /></div>
-                <div class="card-meta"><span>03</span><h2>Juno</h2><p>Void Walker</p></div>
-              </article>
-              <article class="character character--atlas" data-name="Atlas" data-role="Iron Heart">
-                <div class="portrait"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=900&q=85" alt="Atlas character portrait" draggable="false" /></div>
-                <div class="card-meta"><span>04</span><h2>Atlas</h2><p>Iron Heart</p></div>
-              </article>
-            </div>
-          </div>
-          <div class="carousel-hint" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+        <!-- Real slides -->
+        <div class="slide">
+            <div class="placeholder">IMAGE 1</div>
         </div>
-      </section>
 
-      <footer class="footer"><span>SELECT A CHARACTER</span><span class="footer-line"></span><span>ENTER TO CONFIRM</span></footer>
-    </main>
-    <script src="script.js"></script>
-  </body>
+        <div class="slide">
+            <div class="placeholder">IMAGE 2</div>
+        </div>
+
+        <div class="slide">
+            <div class="placeholder">IMAGE 3</div>
+        </div>
+
+        <!-- Clone of Image 1 -->
+        <div class="slide">
+            <div class="placeholder">IMAGE 1</div>
+        </div>
+
+    </div>
+
+    <div class="hint">Swipe left or right</div>
+
+</div>
+
+<script>
+
+const carousel = document.getElementById("carousel");
+const track = document.getElementById("track");
+
+let currentIndex = 1;
+
+let startX = 0;
+let currentX = 0;
+let isDragging = false;
+
+const totalSlides = 3;
+const threshold = 50;
+
+
+// Position carousel at Image 1
+function setPosition(animate = true) {
+
+    track.style.transition = animate
+        ? "transform 0.45s cubic-bezier(0.22, 1, 0.36, 1)"
+        : "none";
+
+    track.style.transform =
+        `translateX(-${currentIndex * 100}%)`;
+}
+
+setPosition(false);
+
+
+// Move to next/previous slide
+function move(direction) {
+
+    if (isDragging) return;
+
+    currentIndex += direction;
+
+    setPosition(true);
+}
+
+
+// When animation finishes, silently move from clones
+track.addEventListener("transitionend", () => {
+
+    // If we're on the clone of Image 3
+    if (currentIndex === 0) {
+
+        currentIndex = totalSlides;
+
+        setPosition(false);
+    }
+
+    // If we're on the clone of Image 1
+    if (currentIndex === totalSlides + 1) {
+
+        currentIndex = 1;
+
+        setPosition(false);
+    }
+});
+
+
+// TOUCH START
+carousel.addEventListener("touchstart", (event) => {
+
+    startX = event.touches[0].clientX;
+    currentX = startX;
+
+    isDragging = true;
+
+    track.style.transition = "none";
+});
+
+
+// TOUCH MOVE
+carousel.addEventListener("touchmove", (event) => {
+
+    if (!isDragging) return;
+
+    currentX = event.touches[0].clientX;
+
+    const difference = currentX - startX;
+
+    const percentage =
+        (difference / carousel.offsetWidth) * 100;
+
+    track.style.transform =
+        `translateX(calc(-${currentIndex * 100}% + ${percentage}%))`;
+});
+
+
+// TOUCH END
+carousel.addEventListener("touchend", () => {
+
+    if (!isDragging) return;
+
+    isDragging = false;
+
+    const difference = currentX - startX;
+
+    // Swipe left
+    if (difference < -threshold) {
+
+        currentIndex++;
+    }
+
+    // Swipe right
+    else if (difference > threshold) {
+
+        currentIndex--;
+    }
+
+    setPosition(true);
+});
+
+
+// MOUSE SUPPORT FOR DESKTOP
+carousel.addEventListener("mousedown", (event) => {
+
+    startX = event.clientX;
+    currentX = startX;
+
+    isDragging = true;
+
+    track.style.transition = "none";
+});
+
+
+carousel.addEventListener("mousemove", (event) => {
+
+    if (!isDragging) return;
+
+    currentX = event.clientX;
+
+    const difference = currentX - startX;
+
+    const percentage =
+        (difference / carousel.offsetWidth) * 100;
+
+    track.style.transform =
+        `translateX(calc(-${currentIndex * 100}% + ${percentage}%))`;
+});
+
+
+carousel.addEventListener("mouseup", () => {
+
+    if (!isDragging) return;
+
+    isDragging = false;
+
+    const difference = currentX - startX;
+
+    if (difference < -threshold) {
+        currentIndex++;
+    }
+
+    else if (difference > threshold) {
+        currentIndex--;
+    }
+
+    setPosition(true);
+});
+
+
+carousel.addEventListener("mouseleave", () => {
+
+    if (!isDragging) return;
+
+    isDragging = false;
+
+    setPosition(true);
+});
+
+
+// Keep the carousel correctly sized if the screen rotates
+window.addEventListener("resize", () => {
+    setPosition(false);
+});
+
+</script>
+
+</body>
 </html>
