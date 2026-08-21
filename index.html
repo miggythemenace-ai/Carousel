@@ -143,8 +143,8 @@ function setPosition(animate = true, dragDistance = 0) {
         ? "transform 0.45s cubic-bezier(0.22, 1, 0.36, 1)"
         : "none";
 
-    const offset = (currentIndex * -100) + dragDistance;
-    track.style.transform = `translateX(${offset}%)`;
+    const offset = (currentIndex * -carousel.clientWidth) + dragDistance;
+    track.style.transform = `translate3d(${offset}px, 0, 0)`;
 }
 
 function normalizeIndex() {
@@ -179,7 +179,7 @@ carousel.addEventListener("pointermove", (event) => {
     if (!isDragging) return;
 
     currentX = event.clientX;
-    const dragDistance = ((currentX - startX) / carousel.offsetWidth) * 100;
+    const dragDistance = currentX - startX;
     setPosition(false, dragDistance);
 });
 
